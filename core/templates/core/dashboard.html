@@ -1,0 +1,40 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<div class="container py-5">
+    <h2 class="fw-bold mb-4">Welcome, {{ request.user.username }}</h2>
+
+    <div class="row g-4">
+        <div class="col-md-3">
+            <div class="card card-custom text-white bg-primary p-3 text-center">
+                <h5>Add Transaction</h5>
+                <i class="bi bi-plus-circle display-4"></i>
+                <a href="{% url 'transactions' %}" class="stretched-link"></a>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card card-custom text-white bg-success p-3 text-center">
+                <h5>Budget</h5>
+                <i class="bi bi-wallet2 display-4"></i>
+                <a href="{% url 'budget' %}" class="stretched-link"></a>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card card-custom text-white bg-warning p-3 text-center">
+                <h5>Export Excel</h5>
+                <i class="bi bi-file-earmark-spreadsheet display-4"></i>
+                <a href="{% url 'export_excel' %}" class="stretched-link"></a>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card card-custom text-white bg-danger p-3 text-center">
+                <h5>Logout</h5>
+                <i class="bi bi-box-arrow-right display-4"></i>
+                <a href="{% url 'logout' %}" class="stretched-link"></a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

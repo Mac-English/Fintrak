@@ -1,0 +1,20 @@
+body {
+    background: linear-gradient(to right, #2c3e50, #3498db);
+    min-height: 100vh;
+    font-family: 'Arial', sans-serif;
+}
+
+.card-custom {
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+}
+.card-custom:hover {
+    transform: translateY(-5px);
+}
+
+.btn-custom {
+    border-radius: 50px;
+    padding: 10px 25px;
+    font-weight: bold;
+}

@@ -1,0 +1,73 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="row vh-100">
+
+    <!-- Left Branding -->
+    <div class="col-md-5 d-flex flex-column justify-content-center align-items-center text-white text-center"
+         style="background: linear-gradient(to bottom, #fefefe, #101417); padding: 2rem;">
+
+        <!-- Logo -->
+        <div class="mb-4 d-flex justify-content-center align-items-center"
+             style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 15px;">
+            <img src="{% static 'core/images/logo.png' %}" alt="FinTrak Logo" style="width:250px; height:auto;">
+        </div>
+
+<!--        <h1 class="display-4 fw-bold mt-3">FinTrak</h1>-->
+        <p class="lead mb-4">Smart Finance Management</p>
+
+        <ul class="list-unstyled text-start mx-auto" style="max-width: 250px;">
+            <li class="mb-2">✔ Track Your Expenses</li>
+            <li class="mb-2">✔ Manage Budgets</li>
+            <li class="mb-2">✔ Visualize Spending</li>
+        </ul>
+    </div>
+
+    <!-- Right Login Form -->
+    <div class="col-md-7 d-flex justify-content-center align-items-center bg-white">
+        <div class="w-75 card-custom p-5">
+
+            <h2 class="fw-bold text-center mb-3">Welcome Back!</h2>
+            <p class="text-center text-muted mb-4">Sign in to your account</p>
+
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+            {% endif %}
+
+            <form method="POST">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Username</label>
+                    <input type="text" name="username" class="form-control" placeholder="Enter username">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control" placeholder="Enter password">
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="rememberMe">
+                        <label class="form-check-label" for="rememberMe">Remember me</label>
+                    </div>
+                    <a href="#" class="text-decoration-none">Forgot password?</a>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-success btn-custom">Sign In</button>
+                </div>
+            </form>
+
+            <p class="text-center mt-3">Don't have an account?
+                <a href="{% url 'register' %}" class="fw-bold text-primary">Create account</a>
+            </p>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
