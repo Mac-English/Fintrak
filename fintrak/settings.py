@@ -144,3 +144,32 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 # REQUIRED for collectstatic during deploy
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+
+
+import os
+
+# ... other settings ...
+
+# Use environment variable to allow Koyeb domain
+# KOYEB_PUBLIC_DOMAIN is automatically set by Koyeb
+ALLOWED_HOSTS = [os.environ.get('KOYEB_PUBLIC_DOMAIN', '127.0.0.1')]
+
+# ... other settings ...
+
+# Set DEBUG to False in a production environment
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+
+# settings.py
+MIDDLEWARE = [
+    # Place WhiteNoise at the top for efficiency
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    # ... rest of your middleware
+]
+
+# ...
+
+# Add this section for static files
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
