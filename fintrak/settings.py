@@ -186,7 +186,19 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
 ]
 
-# ...
+# Recommended complete MIDDLEWARE list in fintrak/settings.py
+
+MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware', # <- Session framework
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware', # <- Authentication framework
+    'django.contrib.messages.middleware.MessageMiddleware', # <- Messages framework
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
 
 # Add this section for static files
 STATIC_URL = '/static/'
