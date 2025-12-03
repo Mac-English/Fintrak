@@ -159,12 +159,31 @@ ALLOWED_HOSTS = [os.environ.get('KOYEB_PUBLIC_DOMAIN', '127.0.0.1')]
 # Set DEBUG to False in a production environment
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-# settings.py
+# fintrak/settings.py
+
 MIDDLEWARE = [
-    # Place WhiteNoise at the top for efficiency
+    # IMPORTANT: Ensure SessionMiddleware is present
+    'django.contrib.sessions.middleware.SessionMiddleware', 
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    # ... rest of your middleware
+    'django.contrib.sessions.middleware.SessionMiddleware', # <- Add it here
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware', # <- This relies on SessionMiddleware
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # Ensure it's listed here among other default middlewares
+]
+
+# **Based on your traceback, this is the minimum you need to add:**
+MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    # ADD THIS LINE:
+    'django.contrib.sessions.middleware.SessionMiddleware', 
+    # Add other core Django middlewares if they are missing (e.g., Common, Csrf, Auth, Messages)
+    'django.contrib.auth.middleware.AuthenticationMiddleware', 
+    'django.contrib.messages.middleware.MessageMiddleware',
 ]
 
 # ...
