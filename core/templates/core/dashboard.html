@@ -1,40 +1,220 @@
 {% extends 'core/base.html' %}
+{% load static %}
 {% block content %}
-<div class="container py-5">
-    <h2 class="fw-bold mb-4">Welcome, {{ request.user.username }}</h2>
 
-    <div class="row g-4">
-        <div class="col-md-3">
-            <div class="card card-custom text-white bg-primary p-3 text-center">
-                <h5>Add Transaction</h5>
-                <i class="bi bi-plus-circle display-4"></i>
+<!-- TOP BAR -->
+<div class="container py-3 d-flex justify-content-between align-items-center">
+    <h3 class="fw-bold">Welcome, {{ request.user.username }}</h3>
+    <a href="{% url 'logout' %}" class="btn btn-danger px-4 py-2">
+        <i class="bi bi-box-arrow-right"></i> Logout
+    </a>
+</div>
+
+<div class="container py-3" style="max-width: 1400px;">
+
+    <!-- QUICK ACTION CARDS -->
+    <div class="row g-3 mb-4 text-center">
+
+        <div class="col-6 col-md-3">
+            <div class="card text-white bg-primary shadow p-3 rounded-4 card-hover">
+                <i class="bi bi-plus-circle display-6"></i>
+                <h6>Add Transaction</h6>
                 <a href="{% url 'transactions' %}" class="stretched-link"></a>
             </div>
         </div>
 
-        <div class="col-md-3">
-            <div class="card card-custom text-white bg-success p-3 text-center">
-                <h5>Budget</h5>
-                <i class="bi bi-wallet2 display-4"></i>
+        <div class="col-6 col-md-3">
+            <div class="card text-white bg-success shadow p-3 rounded-4 card-hover">
+                <i class="bi bi-wallet2 display-6"></i>
+                <h6>Budget</h6>
                 <a href="{% url 'budget' %}" class="stretched-link"></a>
             </div>
         </div>
 
-        <div class="col-md-3">
-            <div class="card card-custom text-white bg-warning p-3 text-center">
-                <h5>Export Excel</h5>
-                <i class="bi bi-file-earmark-spreadsheet display-4"></i>
+        <div class="col-6 col-md-3">
+            <div class="card text-dark bg-warning shadow p-3 rounded-4 card-hover">
+                <i class="bi bi-file-earmark-spreadsheet display-6"></i>
+                <h6>Export Excel</h6>
                 <a href="{% url 'export_excel' %}" class="stretched-link"></a>
             </div>
         </div>
 
-        <div class="col-md-3">
-            <div class="card card-custom text-white bg-danger p-3 text-center">
-                <h5>Logout</h5>
-                <i class="bi bi-box-arrow-right display-4"></i>
-                <a href="{% url 'logout' %}" class="stretched-link"></a>
+        <div class="col-6 col-md-3">
+            <div class="card text-white bg-info shadow p-3 rounded-4 card-hover">
+                <i class="bi bi-file-earmark-pdf display-6"></i>
+                <h6>Generate PDF Report</h6>
+                <a href="{% url 'generate_report' %}" class="stretched-link"></a>
             </div>
         </div>
+
+
     </div>
+
+    <!-- GRAPHS ROW -->
+    <div class="row g-3 mb-4">
+
+        <!-- EXPENSES GRAPH -->
+        <div class="col-md-6">
+            <div class="card shadow rounded-4 p-3">
+                <h6 class="fw-bold mb-2">Transaction Overview</h6>
+                <canvas id="transactionChart" height="160"></canvas>
+            </div>
+        </div>
+
+        <!-- BUDGET GRAPH -->
+        <div class="col-md-6">
+            <div class="card shadow rounded-4 p-3">
+                <h6 class="fw-bold mb-2">Budget Overview</h6>
+                <canvas id="budgetChart" height="160"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- TABLES ROW -->
+    <div class="row g-3">
+
+        <div class="col-md-6">
+            <div class="card shadow rounded-4 p-3">
+                <h6 class="fw-bold mb-2">Recent Transactions</h6>
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered small">
+                        <thead class="table-dark">
+                        <tr>
+                            <th>Date</th>
+                            <th>Category</th>
+                            <th>Amount</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for t in transactions %}
+                        <tr>
+                            <td>{{ t.txn_date }}</td>
+                            <td>{{ t.category }}</td>
+                            <td>{{ t.amount }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center">No transactions found</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow rounded-4 p-3">
+                <h6 class="fw-bold mb-2">Budget Summary</h6>
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered small">
+                        <thead class="table-dark">
+                        <tr>
+                            <th>Month</th>
+                            <th>Limit</th>
+                            <th>Used</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for b in budgets %}
+                        <tr>
+                            <td>{{ b.month }}</td>
+                            <td>{{ b.budget_amount }}</td>
+                            <td>{{ total_expense }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center">No budget data found</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
 </div>
+
+<!-- CHART.JS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- CHART SCRIPT -->
+<script>
+    // ===== INCOME & EXPENSE LINE GRAPH =====
+    const categories = [
+      {% for e in expense_data %}"{{ e.category }}",{% endfor %}
+      {% for i in income_data %}"{{ i.category }}",{% endfor %}
+    ];
+
+    // Remove duplicates
+    const uniqueCategories = [...new Set(categories)];
+
+    const incomeTotals = uniqueCategories.map(cat => {
+        {% for i in income_data %}
+        if ("{{ i.category }}" === cat) return {{ i.total }};
+        {% endfor %}
+        return 0;
+    });
+
+    const expenseTotals = uniqueCategories.map(cat => {
+        {% for e in expense_data %}
+        if ("{{ e.category }}" === cat) return {{ e.total }};
+        {% endfor %}
+        return 0;
+    });
+
+    new Chart(document.getElementById('transactionChart'), {
+        type: 'line',
+        data: {
+            labels: uniqueCategories,
+            datasets: [
+                {
+                    label: "Income",
+                    data: incomeTotals,
+                    borderWidth: 3,
+                    tension: 0.4,
+                    borderColor: "blue"
+                },
+                {
+                    label: "Expense",
+                    data: expenseTotals,
+                    borderWidth: 3,
+                    tension: 0.4,
+                    borderColor: "red"
+                }
+            ]
+        }
+    });
+
+
+    /* BUDGET LINE GRAPH */
+    new Chart(document.getElementById('budgetChart'), {
+        type: 'line',
+        data: {
+            labels: [{% for b in budgets %}"{{ b.month }}",{% endfor %}],
+            datasets: [{
+                label: "Money Budgeted",
+                data: [{% for b in budgets %}{{ b.budget_amount }},{% endfor %}],
+                borderWidth: 3,
+                tension: 0.4
+            }]
+        }
+    });
+</script>
+
+<style>
+    .card-hover {
+        transition: 0.3s;
+    }
+    .card-hover:hover {
+        transform: translateY(-5px);
+    }
+    body {
+        background: #ecf0f1 !important;
+    }
+</style>
+
 {% endblock %}
