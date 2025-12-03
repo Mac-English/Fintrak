@@ -135,3 +135,12 @@ STATICFILES_DIRS = [BASE_DIR / "fintrak/static/"]
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# static files (CSS, JS, images)
+STATIC_URL = '/static/'
+
+# (optional) your project-level static folder for development
+STATICFILES_DIRS = [BASE_DIR / 'static']
+
+# REQUIRED for collectstatic during deploy
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
