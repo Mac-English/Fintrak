@@ -161,44 +161,33 @@ DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 # fintrak/settings.py
 
-MIDDLEWARE = [
-    # IMPORTANT: Ensure SessionMiddleware is present
-    'django.contrib.sessions.middleware.SessionMiddleware', 
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware', # <- Add it here
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware', # <- This relies on SessionMiddleware
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # Ensure it's listed here among other default middlewares
-]
+# fintrak/settings.py
 
-# **Based on your traceback, this is the minimum you need to add:**
 MIDDLEWARE = [
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    # 1. Whitenoise (for static files)
+    'whitenoise.middleware.WhiteNoiseMiddleware', 
+    
+    # 2. Security (handles X-Frame-Options, etc.)
     'django.middleware.security.SecurityMiddleware',
-    # ADD THIS LINE:
+    
+    # 3. Session (handles user sessions, required for login)
     'django.contrib.sessions.middleware.SessionMiddleware', 
-    # Add other core Django middlewares if they are missing (e.g., Common, Csrf, Auth, Messages)
+    
+    # 4. Common (handles APPEND_SLASH)
+    'django.middleware.common.CommonMiddleware',
+    
+    # 5. CSRF (HANDLES YOUR CURRENT ERROR)
+    'django.middleware.csrf.CsrfViewMiddleware', 
+    
+    # 6. Authentication (handles request.user)
     'django.contrib.auth.middleware.AuthenticationMiddleware', 
-    'django.contrib.messages.middleware.MessageMiddleware',
-]
-
-# Recommended complete MIDDLEWARE list in fintrak/settings.py
-
-MIDDLEWARE = [
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware', # <- Session framework
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware', # <- Authentication framework
-    'django.contrib.messages.middleware.MessageMiddleware', # <- Messages framework
+    
+    # 7. Messages (handles message framework)
+    'django.contrib.messages.middleware.MessageMiddleware', 
+    
+    # 8. Clickjacking
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
 
 # Add this section for static files
 STATIC_URL = '/static/'
